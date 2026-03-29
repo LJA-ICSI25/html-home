@@ -1,0 +1,789 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>HTML hub</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,600;0,9..40,700;1,9..40,400&family=IBM+Plex+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <style>
+    :root {
+      --bg: #0c0e12;
+      --surface: #141820;
+      --border: #252b38;
+      --text: #e8eaef;
+      --muted: #8b93a7;
+      --accent: #5eead4;
+      --accent-dim: rgba(94, 234, 212, 0.12);
+      --radius: 12px;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.45);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: "DM Sans", system-ui, sans-serif;
+      font-optical-sizing: auto;
+      background: radial-gradient(1200px 600px at 10% -10%, rgba(94, 234, 212, 0.08), transparent 55%),
+        radial-gradient(900px 500px at 100% 0%, rgba(99, 102, 241, 0.06), transparent 50%),
+        var(--bg);
+      color: var(--text);
+      line-height: 1.55;
+    }
+
+    .wrap {
+      max-width: 1220px;
+      margin: 0 auto;
+      padding: 2.5rem 1.25rem 4rem;
+    }
+
+    header {
+      margin-bottom: 2rem;
+    }
+
+    header h1 {
+      font-size: clamp(1.75rem, 4vw, 2.25rem);
+      font-weight: 700;
+      letter-spacing: -0.03em;
+      margin: 0 0 0.5rem;
+    }
+
+    header p {
+      margin: 0;
+      color: var(--muted);
+      max-width: 42rem;
+    }
+
+    .hub-grid {
+      display: grid;
+      gap: 1.75rem 2.25rem;
+      align-items: start;
+    }
+
+    @media (min-width: 960px) {
+      .hub-grid {
+        grid-template-columns: minmax(260px, 300px) minmax(0, 1fr);
+      }
+    }
+
+    .hub-aside {
+      position: relative;
+    }
+
+    @media (min-width: 960px) {
+      .hub-aside {
+        position: sticky;
+        top: 1.25rem;
+        align-self: start;
+      }
+    }
+
+    .section-label {
+      font-size: 0.72rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.14em;
+      color: var(--muted);
+      margin: 0 0 0.85rem;
+    }
+
+    .cards {
+      display: grid;
+      gap: 0.85rem;
+    }
+
+    .hub-cards {
+      grid-template-columns: 1fr;
+    }
+
+    @media (min-width: 560px) and (max-width: 959px) {
+      .hub-cards {
+        grid-template-columns: repeat(2, 1fr);
+      }
+    }
+
+    .hub-readme {
+      min-width: 0;
+    }
+
+    .readme-column {
+      display: flex;
+      flex-direction: column;
+      gap: 0;
+    }
+
+    #readme-tabs {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.4rem;
+      margin-bottom: 1rem;
+      padding-bottom: 0.85rem;
+      border-bottom: 1px solid var(--border);
+    }
+
+    #readme-tabs[hidden] {
+      display: none;
+    }
+
+    .readme-tab {
+      font: inherit;
+      font-size: 0.8rem;
+      font-weight: 600;
+      padding: 0.45rem 0.8rem;
+      border-radius: 8px;
+      border: 1px solid var(--border);
+      background: var(--surface);
+      color: var(--text);
+      cursor: pointer;
+      transition: border-color 0.15s ease, background 0.15s ease, color 0.15s ease;
+    }
+
+    .readme-tab:hover {
+      border-color: rgba(94, 234, 212, 0.3);
+      color: var(--accent);
+    }
+
+    .readme-tab[aria-selected="true"] {
+      border-color: rgba(94, 234, 212, 0.5);
+      background: var(--accent-dim);
+      color: var(--accent);
+    }
+
+    .readme-tab:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 2px;
+    }
+
+    .readme-section[hidden] {
+      display: none;
+    }
+
+    .card {
+      display: block;
+      padding: 1.1rem 1.2rem;
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      color: inherit;
+      transition: border-color 0.15s ease, transform 0.15s ease, box-shadow 0.15s ease;
+      box-shadow: var(--shadow);
+    }
+
+    .card:hover {
+      border-color: rgba(94, 234, 212, 0.35);
+      transform: translateY(-2px);
+    }
+
+    .card:focus-within {
+      border-color: rgba(94, 234, 212, 0.25);
+    }
+
+    .card a.card-link {
+      display: block;
+      text-decoration: none;
+      color: inherit;
+      margin-top: 0.65rem;
+    }
+
+    .card a.card-link:first-of-type {
+      margin-top: 0.35rem;
+    }
+
+    .card a.card-link:focus-visible {
+      outline: 2px solid var(--accent);
+      outline-offset: 3px;
+      border-radius: 4px;
+    }
+
+    .card-link-label {
+      font-size: 0.65rem;
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      color: var(--muted);
+      margin: 0 0 0.2rem;
+    }
+
+    .card-title {
+      font-weight: 600;
+      font-size: 1.05rem;
+      margin: 0 0 0.35rem;
+      color: var(--text);
+    }
+
+    .card-url {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.75rem;
+      color: var(--accent);
+      word-break: break-all;
+      margin: 0 0 0.5rem;
+      opacity: 0.95;
+    }
+
+    .card-note {
+      font-size: 0.875rem;
+      color: var(--muted);
+      margin: 0;
+    }
+
+    .readme-box {
+      background: var(--surface);
+      border: 1px solid var(--border);
+      border-radius: var(--radius);
+      padding: 1.35rem 1.5rem 1.6rem;
+      box-shadow: var(--shadow);
+    }
+
+    .readme-box .readme-section {
+      font-size: 1rem;
+      line-height: 1.62;
+    }
+
+    .markdown-body h1,
+    .markdown-body h2,
+    .markdown-body h3 {
+      margin: 1.25rem 0 0.5rem;
+      line-height: 1.25;
+    }
+
+    .markdown-body h1:first-child,
+    .markdown-body h2:first-child,
+    .markdown-body h3:first-child {
+      margin-top: 0;
+    }
+
+    .markdown-body h1 { font-size: 1.35rem; }
+    .markdown-body h2 { font-size: 1.15rem; }
+    .markdown-body h3 { font-size: 1.05rem; }
+
+    .markdown-body p {
+      margin: 0.65rem 0;
+      color: var(--text);
+    }
+
+    .markdown-body a {
+      color: var(--accent);
+    }
+
+    .markdown-body code {
+      font-family: "IBM Plex Mono", ui-monospace, monospace;
+      font-size: 0.88em;
+      background: var(--accent-dim);
+      padding: 0.12em 0.4em;
+      border-radius: 4px;
+    }
+
+    .markdown-body pre {
+      background: #0a0c10;
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0.85rem 1rem;
+      overflow-x: auto;
+      margin: 0.85rem 0;
+    }
+
+    .markdown-body pre code {
+      background: none;
+      padding: 0;
+      font-size: 0.82rem;
+    }
+
+    .markdown-body ul,
+    .markdown-body ol {
+      margin: 0.5rem 0 0.5rem 1.25rem;
+      color: var(--text);
+    }
+
+    .markdown-body li {
+      margin: 0.25rem 0;
+    }
+
+    .markdown-body hr {
+      border: none;
+      border-top: 1px solid var(--border);
+      margin: 1.25rem 0;
+    }
+
+    .markdown-body blockquote {
+      margin: 0.75rem 0;
+      padding-left: 1rem;
+      border-left: 3px solid var(--accent);
+      color: var(--muted);
+    }
+
+    .markdown-body table {
+      border-collapse: collapse;
+      width: 100%;
+      font-size: 0.88rem;
+      margin: 0.85rem 0;
+    }
+
+    .markdown-body th,
+    .markdown-body td {
+      border: 1px solid var(--border);
+      padding: 0.45rem 0.65rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .markdown-body th {
+      background: var(--accent-dim);
+      color: var(--text);
+      font-weight: 600;
+    }
+
+    .markdown-body tr:nth-child(even) td {
+      background: rgba(255, 255, 255, 0.02);
+    }
+
+    footer {
+      margin-top: 2.5rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+    }
+  </style>
+</head>
+<body>
+  <div class="wrap">
+    <header>
+      <h1>HTML hub</h1>
+      <p>One file: your site/repo links and <strong>each linked project’s readme</strong> in the Readme tabs (not hub instructions). Send new URLs in chat to update <code>HUB_LINKS</code>.</p>
+    </header>
+
+    <main class="hub-grid">
+      <aside class="hub-aside" aria-labelledby="links-heading">
+        <h2 class="section-label" id="links-heading">Sites</h2>
+        <div class="cards hub-cards" id="link-cards"></div>
+      </aside>
+
+      <section class="hub-readme" id="readme-panel" aria-labelledby="readme-heading">
+        <h2 class="section-label" id="readme-heading">Readme</h2>
+        <div class="readme-column">
+          <div class="readme-box">
+            <div id="readme-tabs" role="tablist" aria-label="Readme sections"></div>
+            <div id="readme-out"></div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <footer>Single-file static page · edit the <code>&lt;textarea id="readme-md"&gt;</code> block for markdown</footer>
+  </div>
+
+  <!-- Paste new links here (or ask the assistant to update this list). -->
+  <script>
+    const HUB_LINKS = [
+      {
+        title: "SQL practice",
+        site: "https://lja-icsi25.github.io/SQL-practice/",
+        repo: "https://github.com/LJA-ICSI25/SQL-practice",
+      },
+      {
+        title: "CCNA notes",
+        site: "https://lja-icsi25.github.io/CCNA-Notes/",
+        repo: "https://github.com/LJA-ICSI25/CCNA-Notes",
+      },
+      {
+        title: "Tech+ study guide",
+        site: "https://lja-icsi25.github.io/TechPlus_study/",
+        repo: "https://github.com/LJA-ICSI25/TechPlus_study",
+      },
+    ];
+  </script>
+
+  <!-- Markdown readme lives here (same file). -->
+  <textarea id="readme-md" hidden readonly>
+## SQL Path — Interactive course (`index.html`)
+
+A single-file, browser-based SQL course. Lessons run **real [SQLite](https://www.sqlite.org/)** in the page via **[sql.js](https://sql.js.org/)** (WebAssembly). There is no backend server and nothing to install.
+
+**Main file:** `index.html`
+
+### How to open it
+
+1. Double-click `index.html`, or open it from your editor’s “Open in browser” action.
+2. The first load needs **internet access** so the page can fetch sql.js from [jsDelivr](https://www.jsdelivr.com/) (`sql-wasm.js` + `sql-wasm.wasm`).
+3. Use a current **Chrome**, **Edge**, or **Firefox**.
+
+### Offline use
+
+Download `sql-wasm.js` and `sql-wasm.wasm` from the [sql.js releases](https://github.com/sql-js/sql.js/releases) (match version **1.11.0** with the URLs in the file), place them next to `index.html`, and change the `&lt;script src="…"&gt;` and `locateFile` URL in the HTML to relative paths.
+
+### What you get
+
+- **Learn** steps: read in the left panel, then **Continue**.
+- **Practice** steps: write SQL in the editor, **Run** to try it, **Check** to validate against the assignment (you may get specific feedback).
+- **Mini-lab** steps (end of most units): checklist only; the checker gives **pass/fail** style messages without teaching the solution.
+- **Capstone** (final step): larger solo project with automated checks.
+
+Progress is **linear**: the next lesson stays locked until the previous one is completed.
+
+### Curriculum (16 units + capstone)
+
+| Unit | Topics |
+|------|--------|
+| 1 · Foundations &amp; DDL | Relational basics, types, `CREATE TABLE`, inserts, early `SELECT` |
+| 2 · Filtering rows | `WHERE`, `AND`/`OR`, `IN`, `BETWEEN`, `LIKE` |
+| 3 · Sorting &amp; NULL | `ORDER BY`, `LIMIT`/`OFFSET`, `DISTINCT`, `NULL` |
+| 4 · Changing data | `INSERT`, `UPDATE`, `DELETE`, `INSERT…SELECT` |
+| 5 · Keys &amp; relations | Primary/foreign keys, composite keys |
+| 6 · JOINs | Inner/left joins, joins with aggregates |
+| 7 · Aggregates | `GROUP BY`, `HAVING`, `SUM` / counts |
+| 8 · Subqueries &amp; CTEs | `IN`, `EXISTS`, `WITH` (CTEs) |
+| 9 · UNION &amp; cleanup | `UNION`, `COALESCE` / `NULLIF` |
+| 10 · Constraints &amp; indexes | `CHECK`, `UNIQUE`, `CREATE INDEX`, `EXPLAIN` concepts |
+| 11 · Transactions | `BEGIN`, `COMMIT`, `ROLLBACK`, batch safety |
+| 12 · CASE &amp; dates | `CASE` expressions, `strftime` / date handling |
+| 13 · Window functions | `ROW_NUMBER`, `SUM() OVER`, partitions |
+| 14 · Upsert | `ON CONFLICT DO UPDATE` / idempotent writes |
+| 15 · Self-joins | Same-table joins, org-style data |
+| 16 · Capstone | End-to-end schema + views (school enrollment) |
+
+Units **1–9** and **10–15** each end with a **mini-lab**; **16** is only the capstone.
+
+There are **67** steps total (including learn, practice, mini-labs, and the final capstone).
+
+### Editor shortcuts
+
+| Action | Shortcut |
+|--------|----------|
+| Run SQL | **Ctrl+Enter** (Cmd+Enter on macOS) |
+| Check answer | **Shift+Ctrl+Enter** |
+| Indent | **Tab** (two spaces); **Shift+Tab** outdents |
+
+### Progress and XP
+
+- Completion and **XP** are stored in the browser under the key **`sql-path-progress-v4`** (`localStorage`).
+- Clearing site data for the file’s origin resets progress.
+- If the course structure changes in a future version, the progress key may be bumped; older keys will not apply to a new layout.
+
+### Maintainer note: splicing curriculum
+
+[`splice_curriculum.py`](splice_curriculum.py) is a small helper that can replace the `/* ——— Curriculum ——— */` block in `index.html` with the contents of a separate text file. The authoritative curriculum in this repo is **inside** `index.html`; the script is optional for bulk edits.
+
+### License / credits
+
+- Course content and HTML: your project.
+- **sql.js** / SQLite: see the [sql.js](https://github.com/sql-js/sql.js) and [SQLite](https://www.sqlite.org/copyright.html) projects.
+
+---
+
+## CompTIA Tech+ (FC0-U71) — Interactive Study Guide
+
+A **single-file, browser-based** study guide for **CompTIA Tech+** certification. No build step, no npm—open the HTML, study offline or online, and track progress in your browser.
+
+&gt; **Disclaimer:** This project is **independent study material**. It is not affiliated with, sponsored by, or endorsed by CompTIA. Exam names and objectives are trademarks of their respective owners. Passing the real exam depends on your preparation and Pearson VUE testing conditions—not on this repository.
+
+---
+
+### Features
+
+| Feature | Description |
+|--------|-------------|
+| **Seven domain chapters** | IT concepts, infrastructure, applications &amp; OS, software development, data &amp; databases, security, plus acronyms &amp; drills. |
+| **Lesson-style content** | Narrative explanations, tables, scenarios, “Exam Essentials” recap blocks, and troubleshooting flow. |
+| **Progress tracking** | Per-objective checkboxes and optional “Skip — I know this” per domain; progress bar excludes skipped modules. |
+| **Chapter check-ins** | Five-question mini-quizzes after each chapter with explanations. |
+| **Full practice exam** | **52 questions** (46 single-choice + **6 select-all-that-apply**), shuffled sessions, grading with explanations. |
+| **45-minute timer** | Optional exam-pace drill on the practice page. |
+| **Acronym table** | Large built-in glossary with **search/filter** and a **matching drill** (random rounds). |
+| **Study mode** | Fullscreen toggle for fewer distractions. |
+| **Persistence** | State saved in **`localStorage`** under the key `techplusStudyGuide_v1` (same browser/profile). |
+| **Pass-readiness contract** | Checklist on the home screen for how to prep before scheduling the real test. |
+
+---
+
+### Quick start
+
+1. Clone or download this repository.
+2. Open **`TechPlus_Study_Guide.html`** in a modern browser (Chrome, Edge, Firefox, or Safari).
+3. Use the left sidebar to navigate **Home**, chapters **1–7**, or **Practice exam**.
+
+**Important:** Some browsers restrict `localStorage` or file access when opening HTML via `file://`. If anything behaves oddly, serve the folder with a tiny static server, for example:
+
+```bash
+# Python 3
+python -m http.server 8080
+```
+
+Then open `http://localhost:8080/TechPlus_Study_Guide.html`.
+
+---
+
+### Repository layout
+
+```
+TechPlus/
+├── README.md                    ← this file
+└── TechPlus_Study_Guide.html    ← the entire app (content + styles + scripts)
+```
+
+All study content—including **Exam Essentials** recap sections—is self-contained in the HTML file.
+
+---
+
+### How to study (recommended)
+
+1. Read chapters **1 → 7** in order; complete each **Chapter check-in** mini-quiz.
+2. Check off objectives only when you could explain them **without** reading.
+3. Use the **acronym** table + **matching drill** until rounds feel easy.
+4. Take the **practice exam** multiple times on **shuffled** sessions; use the **45-minute timer** for at least one full run.
+5. Follow the **pass-readiness contract** on the Home page before booking the exam.
+
+Official objectives (always verify the current bulletin):
+
+**[CompTIA Tech+ certification &amp; objectives](https://www.comptia.org/en-us/certifications/tech/#objectives)**
+
+---
+
+### Resetting progress
+
+- Use **Reset saved progress** in the sidebar to clear objectives, skip flags, and reset on-screen quizzes/practice exam for this site origin.
+
+---
+
+### Browser storage
+
+| Key | Purpose |
+|-----|---------|
+| `techplusStudyGuide_v1` | Objective checkmarks, module skip flags (`localStorage`) |
+
+Export/import is not built in; back up your browser profile or avoid resetting if you care about history.
+
+---
+
+### Tech stack
+
+- **HTML5** + **CSS** (custom dark theme, responsive sidebar)
+- **Vanilla JavaScript** (IIFE, no frameworks)
+- Fonts: **Space Grotesk** + **JetBrains Mono** (loaded from Google Fonts; requires network unless cached)
+
+---
+
+### Contributing
+
+Suggestions and factual corrections are welcome via issues or pull requests. If you add exam-style questions, keep wording original (do not copy paste from proprietary practice exams or brain dumps).
+
+---
+
+## CCNA notes
+
+**This is simply a branch that contains all the sites for easier export and download.**
+
+The text version will always be more up to date than the HTML version. I just don't have all the time to do both. All notes were taken in Notepad++.
+
+For any questions email **ljaicsi25@gmail.com** or Discord **@cyberkeco**.
+
+To view the HTML version, navigate to the **HTML** branch on GitHub.
+
+### In progress
+
+- Chapter 2
+
+### Completed (both text and HTML)
+
+- Chapter 1
+
+Please do not take my work; I do these notes on my own time. Feel free to study but do not claim as your own without permission.
+</textarea>
+
+  <script src="https://cdn.jsdelivr.net/npm/marked/marked.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/dompurify@3.1.7/dist/purify.min.js"></script>
+  <script>
+    (function () {
+      var cards = document.getElementById("link-cards");
+      if (cards) {
+      if (!HUB_LINKS.length) {
+        cards.innerHTML =
+          '<p class="card-note" style="grid-column: 1 / -1; padding: 1rem 0;">No links yet. Add entries to <code style="color:var(--accent)">HUB_LINKS</code> in this file.</p>';
+      } else {
+        HUB_LINKS.forEach(function (item) {
+          var wrap = document.createElement("div");
+          wrap.className = "card";
+
+          var t = document.createElement("p");
+          t.className = "card-title";
+          t.textContent = item.title || item.site || item.repo || item.url || "Untitled";
+          wrap.appendChild(t);
+
+          function addRow(label, href) {
+            if (!href) return;
+            var row = document.createElement("a");
+            row.className = "card-link";
+            row.href = href;
+            row.target = "_blank";
+            row.rel = "noopener noreferrer";
+            var lab = document.createElement("p");
+            lab.className = "card-link-label";
+            lab.textContent = label;
+            var u = document.createElement("p");
+            u.className = "card-url";
+            u.style.margin = "0";
+            u.textContent = href;
+            row.appendChild(lab);
+            row.appendChild(u);
+            wrap.appendChild(row);
+          }
+
+          if (item.site || item.repo) {
+            addRow("Site", item.site);
+            addRow("Repository", item.repo);
+          } else if (item.url) {
+            addRow("Link", item.url);
+          }
+
+          if (item.note) {
+            var n = document.createElement("p");
+            n.className = "card-note";
+            n.style.marginTop = "0.75rem";
+            n.textContent = item.note;
+            wrap.appendChild(n);
+          }
+
+          cards.appendChild(wrap);
+        });
+      }
+      }
+
+      var ta = document.getElementById("readme-md");
+      var out = document.getElementById("readme-out");
+      var tablist = document.getElementById("readme-tabs");
+      if (ta && out && typeof marked !== "undefined" && typeof DOMPurify !== "undefined") {
+        var raw = ta.value;
+        var html = marked.parse(raw);
+        out.innerHTML = DOMPurify.sanitize(html);
+        setupReadmeTabs(out, tablist);
+      } else if (out) {
+        out.textContent = "Could not load markdown renderer.";
+      }
+
+      function activateReadmeTab(index) {
+        var panels = document.querySelectorAll("#readme-out .readme-section");
+        var tabs = document.querySelectorAll("#readme-tabs .readme-tab");
+        if (!panels.length) return;
+        var i = Math.max(0, Math.min(index, panels.length - 1));
+        panels.forEach(function (p, j) {
+          p.hidden = j !== i;
+        });
+        tabs.forEach(function (t, j) {
+          t.setAttribute("aria-selected", j === i ? "true" : "false");
+          t.tabIndex = j === i ? 0 : -1;
+        });
+        try {
+          history.replaceState(null, "", "#readme-" + i);
+        } catch (err) {}
+      }
+
+      function partitionReadme(readmeOut) {
+        var hlist = Array.from(readmeOut.querySelectorAll("h1, h2"));
+        if (!hlist.length) return [];
+
+        var frag = document.createDocumentFragment();
+        var panels = [];
+
+        for (var i = 0; i < hlist.length; i++) {
+          var start = hlist[i];
+          if (!readmeOut.contains(start)) continue;
+          var end = hlist[i + 1] || null;
+          var panel = document.createElement("div");
+          panel.className = "readme-section markdown-body";
+          panel.setAttribute("role", "tabpanel");
+          panel.id = "readme-section-" + i;
+          panel.hidden = i !== 0;
+
+          var node = start;
+          while (node) {
+            if (end && node === end) break;
+            var nxt = node.nextElementSibling;
+            panel.appendChild(node);
+            node = nxt;
+          }
+          frag.appendChild(panel);
+          panels.push(panel);
+        }
+
+        readmeOut.textContent = "";
+        readmeOut.appendChild(frag);
+        return panels;
+      }
+
+      function setupReadmeTabs(readmeOut, tabsEl) {
+        if (!tabsEl) return;
+        var panels = partitionReadme(readmeOut);
+        if (!panels.length) {
+          tabsEl.hidden = true;
+          return;
+        }
+
+        if (panels.length < 2) {
+          tabsEl.hidden = true;
+          panels[0].hidden = false;
+          return;
+        }
+
+        tabsEl.hidden = false;
+        tabsEl.textContent = "";
+
+        panels.forEach(function (panel, i) {
+          var heading = panel.querySelector("h1, h2");
+          var label = heading ? heading.textContent.trim() : "Section " + (i + 1);
+          if (label.length > 42) label = label.slice(0, 40) + "…";
+
+          var tab = document.createElement("button");
+          tab.type = "button";
+          tab.className = "readme-tab";
+          tab.setAttribute("role", "tab");
+          tab.setAttribute("aria-selected", i === 0 ? "true" : "false");
+          tab.setAttribute("aria-controls", panel.id);
+          tab.id = "readme-tab-" + i;
+          tab.textContent = label;
+          tab.tabIndex = i === 0 ? 0 : -1;
+          panel.setAttribute("aria-labelledby", tab.id);
+
+          tab.addEventListener("click", function () {
+            activateReadmeTab(i);
+            tab.focus();
+          });
+
+          tabsEl.appendChild(tab);
+        });
+
+        tabsEl.addEventListener("keydown", function (ev) {
+          var tabs = Array.from(tabsEl.querySelectorAll(".readme-tab"));
+          var cur = tabs.indexOf(document.activeElement);
+          if (cur < 0) return;
+          var next = cur;
+          if (ev.key === "ArrowRight" || ev.key === "ArrowDown") {
+            ev.preventDefault();
+            next = (cur + 1) % tabs.length;
+          } else if (ev.key === "ArrowLeft" || ev.key === "ArrowUp") {
+            ev.preventDefault();
+            next = (cur - 1 + tabs.length) % tabs.length;
+          } else if (ev.key === "Home") {
+            ev.preventDefault();
+            next = 0;
+          } else if (ev.key === "End") {
+            ev.preventDefault();
+            next = tabs.length - 1;
+          } else {
+            return;
+          }
+          activateReadmeTab(next);
+          tabs[next].focus();
+        });
+
+        var m = location.hash.match(/^#readme-(\d+)$/);
+        if (m) {
+          var ix = parseInt(m[1], 10);
+          if (ix >= 0 && ix < panels.length) activateReadmeTab(ix);
+        }
+      }
+    })();
+  </script>
+</body>
+</html>
